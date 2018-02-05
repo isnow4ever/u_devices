@@ -19,24 +19,24 @@ int8_t analogRead(uint8_t channel)
     switch(channel)
     {
         case 0:
-            buf2_w[0]=(uint16_t)SET_CHANNEL0>>8;
-            buf2_w[1]=(uint8_t)SET_CHANNEL0;
+            buf2_w[0]=0x83;
+            buf2_w[1]=0x00;
             break;
         case 1:
-            buf2_w[0]=(uint16_t)SET_CHANNEL1>>8;
-            buf2_w[1]=(uint8_t)SET_CHANNEL1;
+            buf2_w[0]=0x87;
+            buf2_w[1]=0x00;
             break;
         case 2:
-            buf2_w[0]=(uint16_t)SET_CHANNEL2>>8;
-            buf2_w[1]=(uint8_t)SET_CHANNEL2;
+            buf2_w[0]=0x8f;
+            buf2_w[1]=0x80;
             break;
         default :
             break;
     }
     spi_write_read(buf2_w,buf2_r,2,file);//write the command to ad7904
 
-    buf2_w[0]=(uint16_t)JUSTREAD>>8;
-    buf2_w[1]=(uint8_t)JUSTREAD;//set the value just to read
+    buf2_w[0]=0x00;
+    buf2_w[1]=0x00;//set the value just to read
     spi_write_read(buf2_w,buf2_r,2,file);
 
  //   printf("data:%x%x\r\n",buf2_r[0],buf2_r[1]);

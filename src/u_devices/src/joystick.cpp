@@ -1,12 +1,15 @@
 #include "ros/ros.h"
 #include "devices.h"
-#include <Arduino.h>
+extern "C"
+{
+#include "marsboard.h"
+}
 #include "std_msgs/String.h"
 
 
-#define adc_id1 3
-#define adc_id2 4
-#define adc_id3 5
+#define adc_id1 0
+#define adc_id2 1
+#define adc_id3 2
 
 int joystick_axis_X_offset;
 int joystick_axis_Y_offset;
@@ -94,7 +97,7 @@ void initialize()
         sum_x = sum_x + analogRead(adc_id1);
         sum_y = sum_y + analogRead(adc_id2);
         sum_z = sum_z + analogRead(adc_id3);
-        delayMicroseconds(2);
+      //  delayMicroseconds(2);
     }
     joystick_axis_X_offset = int(sum_x / 1000);
     joystick_axis_Y_offset = int(sum_y / 1000);
@@ -119,7 +122,7 @@ void callback(const std_msgs::String::ConstPtr& msg)
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv, "joystick");    //ros initial
-    init();                             //aduino initial
+  //  init();                             //aduino initial
 
     Joystick js;
 
@@ -129,26 +132,26 @@ int main(int argc, char *argv[])
 
     ros::Rate loop_rate(50);
 
-    initialize();
+   initialize();
 
     while(1) {
         if(!ros::master::check())
         {
             ROS_INFO("ros master is down!");
-            digitalWrite(1, LOW);
+            digitalWrite(LED_RED, LOW);
             sleep(1);
         }
         else
         {
-            digitalWrite(1, HIGH);
+            digitalWrite(LED_RED, HIGH);
             std_msgs::String js_msg;
             std::stringstream js_ss;
 
             js.x_value = js.fliter(adc_id1);
             js.y_value = js.fliter(adc_id2);
             js.z_value = js.fliter(adc_id3);
-            js.enable_value = digitalRead(6);
-            js.disable_value = digitalRead(7);
+            js.enable_value = digitalRead(START);
+            js.disable_value = digitalRead(START_KEY);
 
             js_ss << js.x_value << " " << js.y_value << " " << js.z_value << " " << js.enable_value<<" "<<js.disable_value;
 
@@ -166,9 +169,9 @@ int main(int argc, char *argv[])
             restart = 0;
         }
         if(js.enable_value == 1)
-            digitalWrite(0, LOW);
+            digitalWrite(LED_GREEN, LOW);
         else
-            digitalWrite(0, HIGH);
+            digitalWrite(LED_GREEN, HIGH);
 //        if(moving == 1)
 //            digitalWrite(1, LOW);
 //        else

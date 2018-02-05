@@ -22,18 +22,23 @@ include_directories(${catkin_INCLUDE_DIRS})
 #############
 ##  Build  ##
 #############
-# add_executable(joystick src/devices.h src/joystick.cpp)
-# target_link_libraries(joystick arduino ${catkin_LIBRARIES})
+
 
 # add_executable(keypad src/devices.h src/keypad.cpp)
 # target_link_libraries(keypad arduino ${catkin_LIBRARIES})
-add_library(gpio_lib src/gpio_lib.h src/gpio_lib.c)
-add_library(spi_lib src/spi_lib.h src/spi_lib.c)
+add_library(gpio_lib include/gpio_lib.h include/gpio_lib.c)
+add_library(spi_lib include/spi_lib.h include/spi_lib.c)
 
-add_library(marsboard src/spi_lib.h src/gpio_lib.h src/marsboard.h src/gpio.c src/spi.c)
-target_link_libraries(marsboard gpio_lib spi_lib ${catkin_LIBRARIES})
+add_library(gpio include/gpio_lib.h include/gpio_lib.c include/spi_lib.h include/spi_lib.c include/marsboard.h)
+add_library(spi include/gpio_lib.h include/gpio_lib.c include/spi_lib.h include/spi_lib.c include/marsboard.h)
 
-add_executable(io src/marsboard.h src/test.cpp)
+add_library(marsboard include/spi_lib.h include/gpio_lib.h include/marsboard.h include/gpio.c include/spi.c)
+target_link_libraries(marsboard gpio_lib spi_lib gpio spi ${catkin_LIBRARIES})
+
+add_executable(joystick src/devices.h include/marsboard.h src/joystick.cpp)
+target_link_libraries(joystick marsboard ${catkin_LIBRARIES})
+
+add_executable(io include/marsboard.h src/test.c)
 target_link_libraries(io marsboard ${catkin_LIBRARIES})
 
 #############

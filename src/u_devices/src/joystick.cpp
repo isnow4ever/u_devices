@@ -125,8 +125,7 @@ int main(int argc, char *argv[])
 
     ros::NodeHandle n;
     ros::Publisher joystick_pub = n.advertise<std_msgs::String>("u_pendant/devices/joystick", 1000);
-    ros::Subscriber joystick_sub
-            = n.subscribe("u_pendant/devices/control", 2, callback);
+    ros::Subscriber joystick_sub = n.subscribe("u_pendant/devices/control", 2, callback);
 
     ros::Rate loop_rate(50);
 
